@@ -1,11 +1,11 @@
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import type webpack from 'webpack';
-import {merge} from 'webpack-merge';
+import { merge } from 'webpack-merge';
 
 import path from 'node:path';
 
-import {baseConfig, hotReloadPlugins} from './webpack.config.base.ts';
+import { baseConfig, hotReloadPlugins } from './webpack.config.base.ts';
 
 const projectRoot = process.cwd();
 
@@ -16,10 +16,7 @@ class CloudflareRedirectsPlugin {
         'https://evanpurkhiser.notion.site/Prolink-Tools-User-Manual-1c0e5b28732b435a9804b992939ed791';
       const redirects = `/manual ${notionManualUrl} 302\n`;
 
-      compilation.emitAsset(
-        '_redirects',
-        new compiler.webpack.sources.RawSource(redirects),
-      );
+      compilation.emitAsset('_redirects', new compiler.webpack.sources.RawSource(redirects));
     });
   }
 }
@@ -33,13 +30,15 @@ const websiteConfig: webpack.Configuration = merge(baseConfig, {
     publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(projectRoot, 'dist/website'),
+    static: {
+      directory: path.join(projectRoot, 'dist/website'),
+    },
     historyApiFallback: true,
     port: 2004,
     hot: true,
   },
   optimization: {
-    runtimeChunk: {name: 'runtime-website'},
+    runtimeChunk: { name: 'runtime-website' },
   },
   module: {
     rules: [
@@ -49,7 +48,7 @@ const websiteConfig: webpack.Configuration = merge(baseConfig, {
       },
       {
         test: /\.ttf$/,
-        use: [{loader: 'file-loader'}],
+        use: [{ loader: 'file-loader' }],
       },
       {
         test: /electron/,
@@ -59,10 +58,10 @@ const websiteConfig: webpack.Configuration = merge(baseConfig, {
   },
   plugins: [
     ...hotReloadPlugins,
-    new HtmlWebpackPlugin({title: 'prolink tools', favicon: 'build/icon.png'}),
+    new HtmlWebpackPlugin({ title: 'prolink tools', favicon: 'build/icon.png' }),
     new CloudflareRedirectsPlugin(),
     new ForkTsCheckerWebpackPlugin({
-      issue: {include: [{file: 'src/website/**/*'}, {file: 'src/shared/**/*'}]},
+      issue: { include: [{ file: 'src/website/**/*' }, { file: 'src/shared/**/*' }] },
     }),
   ],
 });

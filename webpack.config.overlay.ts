@@ -1,11 +1,11 @@
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import type webpack from 'webpack';
-import {merge} from 'webpack-merge';
+import { merge } from 'webpack-merge';
 
 import path from 'node:path';
 
-import {baseConfig, hotReloadPlugins} from './webpack.config.base.ts';
+import { baseConfig, hotReloadPlugins } from './webpack.config.base.ts';
 
 const projectRoot = process.cwd();
 
@@ -18,7 +18,9 @@ const overlayConfig: webpack.Configuration = merge(baseConfig, {
     publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(projectRoot, 'dist/overlay'),
+    static: {
+      directory: path.join(projectRoot, 'dist/overlay'),
+    },
     historyApiFallback: true,
     port: 2005,
     hot: true,
@@ -33,13 +35,13 @@ const overlayConfig: webpack.Configuration = merge(baseConfig, {
   },
   optimization: {
     minimize: false,
-    runtimeChunk: {name: 'runtime-overlay'},
+    runtimeChunk: { name: 'runtime-overlay' },
   },
   module: {
     rules: [
       {
         test: /\.ttf$/,
-        use: [{loader: 'file-loader'}],
+        use: [{ loader: 'file-loader' }],
       },
       {
         test: /electron/,
@@ -49,9 +51,9 @@ const overlayConfig: webpack.Configuration = merge(baseConfig, {
   },
   plugins: [
     ...hotReloadPlugins,
-    new HtmlWebpackPlugin({title: 'Prolink Tools Overlay'}),
+    new HtmlWebpackPlugin({ title: 'Prolink Tools Overlay' }),
     new ForkTsCheckerWebpackPlugin({
-      issue: {include: [{file: 'src/overlay/**/*'}, {file: 'src/shared/**/*'}]},
+      issue: { include: [{ file: 'src/overlay/**/*' }, { file: 'src/shared/**/*' }] },
     }),
   ],
 });

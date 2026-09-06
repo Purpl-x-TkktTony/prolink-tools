@@ -5,7 +5,9 @@
 Prolink Tools is a collection of tools that can be used to interact with the
 Pioneer Pro DJ Link functionality that many of Pioneer's DJ equipment is
 compatible with.
-[Read the User Manual](https://prolink.tools/manual) to get started
+[Read the User Manual](https://prolink.tools/manual) to get started.
+
+See [development.md](development.md) for build and development instructions.
 
 ### Features
 

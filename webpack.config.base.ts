@@ -5,7 +5,7 @@ import webpack from 'webpack';
 
 import path from 'node:path';
 
-import {commit, releaseChannel, releaseId} from './scripts/release.ts';
+import { commit, releaseChannel, releaseId } from './scripts/release.ts';
 
 const projectRoot = process.cwd();
 
@@ -26,7 +26,7 @@ const envConfig = {
 };
 
 export const hotReloadPlugins = !IS_PROD
-  ? [new ReactRefreshWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]
+  ? [new ReactRefreshWebpackPlugin({ overlay: false }), new webpack.HotModuleReplacementPlugin()]
   : [];
 
 export const baseConfig: webpack.Configuration = {
@@ -58,7 +58,7 @@ export const baseConfig: webpack.Configuration = {
     minimizer: [
       // Avoid mangling class names as we reflectively look at the constructor
       // name for deserialization.
-      new TerserPlugin({terserOptions: {mangle: false}}),
+      new TerserPlugin({ terserOptions: { mangle: false } }),
     ],
   },
 
@@ -73,16 +73,12 @@ export const baseConfig: webpack.Configuration = {
         options: {
           cacheDirectory: true,
           babelrc: false,
-          presets: [
-            '@babel/preset-env',
-            '@babel/preset-typescript',
-            ['@babel/preset-react', {runtime: 'automatic'}],
-          ],
+          presets: ['@babel/preset-env', '@babel/preset-typescript', ['@babel/preset-react', { runtime: 'automatic' }]],
           plugins: [
-            ['@babel/plugin-proposal-decorators', {legacy: true}],
-            ['@babel/plugin-proposal-class-properties', {loose: true}],
-            ['@babel/plugin-proposal-private-methods', {loose: true}],
-            ['@babel/plugin-transform-private-property-in-object', {loose: true}],
+            ['@babel/plugin-proposal-decorators', { legacy: true }],
+            ['@babel/plugin-proposal-class-properties', { loose: true }],
+            ['@babel/plugin-proposal-private-methods', { loose: true }],
+            ['@babel/plugin-transform-private-property-in-object', { loose: true }],
             ['@babel/plugin-proposal-optional-chaining'],
             ['@babel/plugin-proposal-nullish-coalescing-operator'],
             !IS_PROD && require.resolve('react-refresh/babel'),
@@ -95,8 +91,7 @@ export const baseConfig: webpack.Configuration = {
         use: {
           loader: 'source-map-loader',
           options: {
-            filterSourceMappingUrl: (_: string, resourcePath: string) =>
-              !/.*\/node_modules\/.*/.test(resourcePath),
+            filterSourceMappingUrl: (_: string, resourcePath: string) => !/.*\/node_modules\/.*/.test(resourcePath),
           },
         },
       },

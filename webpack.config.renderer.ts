@@ -1,11 +1,11 @@
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
-import {merge} from 'webpack-merge';
+import { merge } from 'webpack-merge';
 
 import path from 'node:path';
 
-import {baseConfig, hotReloadPlugins, IS_PROD} from './webpack.config.base.ts';
+import { baseConfig, hotReloadPlugins, IS_PROD } from './webpack.config.base.ts';
 
 const projectRoot = process.cwd();
 
@@ -16,7 +16,9 @@ const rendererConfig: webpack.Configuration = merge(baseConfig, {
     sentry: './src/shared/sentry/renderer.ts',
   },
   devServer: {
-    contentBase: path.join(projectRoot, 'dist'),
+    static: {
+      directory: path.join(projectRoot, 'dist'),
+    },
     historyApiFallback: true,
     port: 2003,
     hot: true,
@@ -26,7 +28,7 @@ const rendererConfig: webpack.Configuration = merge(baseConfig, {
 
     // Use runtime chunk in development to fix HMR. Do not use in production
     // because runtime chunks break sentry. Probably worth fixing this.
-    runtimeChunk: !IS_PROD ? {name: 'runtime-renderer'} : false,
+    runtimeChunk: !IS_PROD ? { name: 'runtime-renderer' } : false,
   },
   module: {
     rules: [
@@ -36,16 +38,16 @@ const rendererConfig: webpack.Configuration = merge(baseConfig, {
       },
       {
         test: /\.ttf$/,
-        use: [{loader: 'file-loader'}],
+        use: [{ loader: 'file-loader' }],
       },
     ],
   },
   plugins: [
     ...hotReloadPlugins,
-    new HtmlWebpackPlugin({title: 'Prolink Tools'}),
-    new webpack.DefinePlugin({'process.type': '"renderer"'}),
+    new HtmlWebpackPlugin({ title: 'Prolink Tools' }),
+    new webpack.DefinePlugin({ 'process.type': '"renderer"' }),
     new ForkTsCheckerWebpackPlugin({
-      issue: {include: [{file: 'src/renderer/**/*'}, {file: 'src/shared/**/*'}]},
+      issue: { include: [{ file: 'src/renderer/**/*' }, { file: 'src/shared/**/*' }] },
     }),
   ],
 });
