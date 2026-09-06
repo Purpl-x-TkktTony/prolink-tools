@@ -14,6 +14,7 @@ import {registerDebuggingEventsService} from 'main/debugEvents';
 import {setupMenu} from 'main/menu';
 import {startOverlayServer} from 'main/overlayServer';
 import {setupSaveHistory} from 'main/saveHistory';
+import {getPlaybackSnapshot} from 'src/shared/api/playback';
 import {userInfo} from 'src/shared/sentry/main';
 import type {AppStore} from 'src/shared/store';
 import {createAppStore} from 'src/shared/store';
@@ -166,7 +167,9 @@ app.on('ready', async () => {
   //
   // As thus THIS LINE MUST BE PLACED AFTER THE NETWORK IS BROUGHT ONLINE.
   //
-  const httpServer = await startOverlayServer();
+  const httpServer = await startOverlayServer(() =>
+    getPlaybackSnapshot(mainStore, new Date()),
+  );
 
   // Start the main websocket on the overlay server
   registerMainWebsocket(mainStore, httpServer, register);

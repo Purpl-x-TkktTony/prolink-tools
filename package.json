@@ -25,7 +25,8 @@
     "dist": "electron-builder",
     "lint": "oxlint src/",
     "format": "oxfmt .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "test:playback-api": "node -r ts-node/register -r tsconfig-paths/register --test src/shared/api/playback.test.ts src/main/playbackApi.test.ts"
   },
   "dependencies": {
     "@babel/core": "^7.29.0",

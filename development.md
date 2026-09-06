@@ -23,3 +23,12 @@ pnpm start
 
 The development stack also starts the website dev server on port `2004`, the
 overlay dev server on port `2005`, and the API server on port `8888`.
+
+## Tests
+
+The local playback API (see [docs/local-api.md](docs/local-api.md)) has unit
+tests using Node's built-in test runner:
+
+```sh
+pnpm test:playback-api
+```

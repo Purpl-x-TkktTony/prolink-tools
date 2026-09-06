@@ -73,6 +73,10 @@ const connectStatus = (store: AppStore, network: ConnectedProlinkNetwork) =>
       // We don't care about the packet ID
       state.packetNum = 0;
 
+      // Local-only freshness marker, updated on every accepted packet even
+      // if the resulting state values are unchanged.
+      deviceStore.lastStatusReceivedAt = Date.now();
+
       if (deviceStore.state === undefined) {
         deviceStore.state = state;
         return;

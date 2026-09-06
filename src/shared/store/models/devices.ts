@@ -38,6 +38,12 @@ export class DeviceStore {
   @observable
   state?: CDJStatus.State;
   /**
+   * Timestamp (ms since epoch) the last status packet was received at. Not
+   * persisted or serialized to the store snapshot; local-process only, used
+   * to determine status freshness (e.g. for the local playback API).
+   */
+  lastStatusReceivedAt?: number;
+  /**
    * The current loaded track of the device. May be undefined if there is no track
    * loaded.
    */
