@@ -27,6 +27,20 @@ machine that Prolink Tools is running on.
 GET http://127.0.0.1:5152/api/v1/status
 ```
 
+### Testing without DJ hardware
+
+You can run a static local fixture for testing Streamer.bot, MixItUp, or other
+integrations before connecting real DJ hardware:
+
+```sh
+pnpm mock-local-api
+```
+
+This serves a sample current track, previous track, and available master at the
+same `http://127.0.0.1:5152/api/v1/status` URL. Leave it running while testing
+the integration, and stop it with `Ctrl+C`. Do not run it at the same time as
+Prolink Tools, since both use port `5152`.
+
 - Response is `application/json; charset=utf-8` with `Cache-Control: no-store`
   (always fetch fresh; there is no caching).
 - `HEAD` is also supported (same headers, no body).

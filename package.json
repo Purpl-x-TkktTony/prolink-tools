@@ -15,6 +15,7 @@
     "start-dev": "run-p start-dev:*",
     "start": "electron dist/main.js",
     "start-api": "ts-node -r dotenv/config ./src/api/index.ts",
+    "mock-local-api": "node -r ts-node/register scripts/mock-local-api.ts",
     "build": "run-p build-*",
     "build-main": "cross-env NODE_ENV=production webpack --config=webpack.config.main.ts",
     "build-renderer": "cross-env NODE_ENV=production webpack --config=webpack.config.renderer.ts",
