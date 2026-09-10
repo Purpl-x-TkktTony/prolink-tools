@@ -28,7 +28,7 @@ See [development.md](development.md) for build and development instructions.
 - **Local playback API**
   A local, read-only HTTP endpoint exposes the current playback state (now
   playing, device status, DJM master) for use with tools like
-  [Streamer.bot](https://streamer.bot/) or [vMix](https://www.vmix.com/). See [docs/local-api.md](docs/local-api.md).
+  [Streamer.bot](https://streamer.bot/),or [MixItUp](https://mixitup.bot/). See [docs/local-api.md](docs/local-api.md).
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/1421724/87513887-41071580-c62e-11ea-83d6-da486759db11.png" alt="prolink tools application" />

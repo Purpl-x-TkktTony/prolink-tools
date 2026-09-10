@@ -164,25 +164,128 @@ if the master has no track loaded, but this doesn't affect master selection.
 
 ## Streamer.bot integration
 
-You can use Streamer.bot's HTTP request sub-action (or a small C# action) to
-poll `GET http://127.0.0.1:5152/api/v1/status` and parse the JSON response.
-Suggested command mapping:
+The easiest way to wire up `!trackid`, `!lasttrack`, and `!bpm` is a single
+Streamer.bot action with all three commands as triggers, sharing one
+"Execute C# Code" sub-action that polls the endpoint once per invocation and
+posts the right formatted message.
 
-- `!trackid` -- `current.track` (`title` by `artist`, or "No track played
-  yet" if `current` is `null`)
-- `!lasttrack` -- `previous.track` (or "No previous track" if `previous` is
-  `null`)
-- `!bpm` -- `master.status.bpm` rounded to one decimal (or "BPM unavailable"
-  if `master` is `null`)
+### Setup
 
-Notes:
+#### StreamerBot Import code
 
-- Numbers in the response are plain JSON numbers (locale-independent) --
-  format them yourself before posting to chat.
-- Handle connection failures/timeouts (app not running yet) and `null`
-  fields gracefully -- don't dump the raw JSON to chat.
-- This has not yet been validated against a real Streamer.bot instance in an
-  actual show; please report issues if something doesn't line up.
+An example to get you started already exists in
+[../examples/StreamerBot](../examples/StreamerBot/Prolink%20Tools%20example%20import%20code.txt).
+
+#### Manual setup
+
+1. In Streamer.bot, create a new **Action** (e.g. "Prolink Tools - Now
+   Playing Commands").
+2. Add three **Command** triggers to it: `!trackid`, `!lasttrack`, `!bpm`.
+3. Add a single **Execute C# Code** sub-action and paste in the
+  [example script](/examples/StreamerBot/prolink%20tools%20action%20script.cs).
+4. Click the **Find References** and then **Compile**.
+   1. StreamerBot often misses the DLL for the `System` library, so the compile may fail here. If so, you may have to manually add that reference.
+      1. Click the **References** tab.
+      2. There should already be a bunch of references there like `C:\windows\Microsoft.NET\Framework64\v4.0.30319\mscorlib.dll`, take note of this path.
+      3. Right click the empty space below the last export and select **Add reference from file...**.
+      4. Follow the same path that the `mscorlib.dll`.
+      5. Within that same folder, there should also be a `System.dll`, add that file.
+      6. Click on **Compile** again and it should be successful this time.
+5. Click **Save**.
+
+### Notes
+
+- This uses `CPH.SendMessage`, which posts to Twitch chat. If you're on Kick
+  or YouTube, swap in `CPH.SendKickMessage`/`CPH.SendYouTubeMessage` instead.
+- The HTTP call has a 2s timeout and is wrapped in a try/catch so the command
+  fails gracefully (rather than hanging or dumping an exception to chat) if
+  Prolink Tools isn't running yet.
+- BPM is truncated (not rounded) to drop the decimal portion.
+
+## MixItUp integration
+
+The easiest MixItUp setup is one chat command per public trigger, each with a
+**Web Request** action followed by a **Chat** action. MixItUp's Web Request
+action waits for the HTTP response and can map JSON values into Special
+Identifiers, so no C# script is needed for the basic `!trackid`, `!lasttrack`,
+and `!bpm` commands.
+
+### Setup
+
+#### MixItUp Command Imports
+
+There are already some pre-created commands to get you started within the [../examples/MixItUp](../examples/MixItUp)
+dir. There are 3 example commands already created:
+
+- [bpm comand](../examples/MixItUp/Prolink%20Tools%20-%20bpm.miucommand)
+- [trackId command](../examples/MixItUp/Prolink%20Tools%20-%20TrackId.miucommand)
+- [lastTrack command](../examples/MixItUp/Prolink%20Tools%20-%20LastTrack.miucommand)
+
+#### Manual setup
+
+Create three **Chat Commands** in MixItUp:
+
+- `!trackid`
+- `!lasttrack`
+- `!bpm`
+
+For each command, add a **Web Request** action with these shared settings:
+
+- **Method:** `GET`
+- **URL:** `http://127.0.0.1:5152/api/v1/status`
+- **Response parse type:** JSON to Special Identifiers
+
+Then add the command-specific JSON mappings below.
+
+#### `!trackid`
+
+| JSON value | Special Identifier |
+| --- | --- |
+| `current/track/artist` | `$prolinkartist` |
+| `current/track/title` | `$prolinktitle` |
+
+Add a **Chat** action after the Web Request action:
+
+```text
+$prolinkartist - $prolinktitle
+```
+
+#### `!lasttrack`
+
+| JSON value | Special Identifier |
+| --- | --- |
+| `previous/track/artist` | `$prolinkartist` |
+| `previous/track/title` | `$prolinktitle` |
+
+Add a **Chat** action after the Web Request action:
+
+```text
+$prolinkartist - $prolinktitle
+```
+
+#### `!bpm`
+
+| JSON value | Special Identifier |
+| --- | --- |
+| `master/status/bpm` | `$prolinkbpm` |
+
+Add a **Chat** action after the Web Request action:
+
+```text
+$prolinkbpm BPM
+```
+
+### Notes
+
+- MixItUp's JSON mappings use `/` or `\` between nested values.
+- Numeric path segments can index arrays, but these commands only need object paths.
+- If Prolink Tools is not running, or if a mapped JSON value is unavailable,
+  the later Chat action may send an empty or unresolved Special Identifier. Add
+  MixItUp Conditional actions if you want friendly fallbacks such as `No track
+  played yet`, `No previous track`, or `BPM unavailable`.
+- BPM is reported exactly as the API returns it. If you want to truncate the
+  decimal portion like the Streamer.bot snippet above, add a Special Identifier
+  math/formatting step or use a Script action before the Chat action.
 
 ## Security
 
