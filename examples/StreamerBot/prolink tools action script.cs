@@ -7,9 +7,18 @@ using Newtonsoft.Json.Linq;
 // when updating the script
 public class CPHInline
 {
+    private string userName;
+
     public bool Execute()
     {
+        CPH.TryGetArg("userName", out userName);
         CPH.TryGetArg("command", out string command);
+        command = command?.ToLowerInvariant();
+
+        if (command != "!trackid" && command != "!lasttrack" && command != "!bpm")
+        {
+            return true;
+        }
 
         JObject status;
         try
@@ -23,22 +32,24 @@ public class CPHInline
         }
         catch
         {
-            CPH.SendMessage("Prolink Tools doesn't seem to be running.");
+            CPH.SendMessage("Unable to get track data. Is Prolink Tools running? CarlSmile");
             return true;
         }
 
         // Handle the chat command
         string message;
-        switch (command?.ToLowerInvariant())
+        switch (command)
         {
             case "!trackid":
-                message = FormatTrack(status["current"], "No track played yet");
+                message = FormatTrack(status["current"], true);
                 break;
             case "!lasttrack":
-                message = FormatTrack(status["previous"], "No previous track");
+                message = FormatTrack(status["previous"], false);
                 break;
             case "!bpm":
-                message = FormatBpm(status["master"]?["status"]?["bpm"]);
+                var master = status["master"] as JObject;
+                var masterStatus = master?["status"] as JObject;
+                message = FormatBpm(masterStatus?["bpm"]);
                 break;
             default:
                 return true;
@@ -49,27 +60,33 @@ public class CPHInline
     }
 
     // Format the track message
-    private string FormatTrack(JToken entry, string fallback)
+    private string FormatTrack(JToken entry, bool isCurrentTrack)
     {
-        var track = entry?["track"];
+        var track = (entry as JObject)?["track"] as JObject;
         if (track == null)
         {
-            return fallback;
+            return isCurrentTrack
+                ? "No track playing yet BigSad"
+                : "No previous track DansGame";
         }
 
-        return $"{track["artist"]?.ToString()} - {track["title"]?.ToString()}";
+        return isCurrentTrack
+            ? $"@{userName} The currently playing track is: {track["artist"]?.ToString()} - {track["title"]?.ToString()} DinoDance"
+            : $"@{userName} The last played track was: {track["artist"]?.ToString()} - {track["title"]?.ToString()} DinoDance";
     }
 
     private string FormatBpm(JToken bpm)
     {
         if (bpm == null || bpm.Type == JTokenType.Null)
         {
-            return "BPM unavailable";
+            return "BPM unavailable cmonBruh";
         }
+
+        double bpmValue = Convert.ToDouble(bpm.ToString());
 
         // Convert via the string form rather than `bpm.Value<double>()` since
         // that extension method can trip a `CS0012 IDynamicMetaObjectProvider`
         // error in Streamer.bot's compiler.
-        return $"{Math.Floor(Convert.ToDouble(bpm.ToString()))} BPM";
+        return $"@{userName} We're currently jamming at: {Math.Floor(bpmValue)} BPM DinoDance";
     }
 }

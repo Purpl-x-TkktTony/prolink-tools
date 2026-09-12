@@ -174,16 +174,15 @@ posts the right formatted message.
 #### StreamerBot Import code
 
 An example to get you started already exists in
-[../examples/StreamerBot](../examples/StreamerBot/Prolink%20Tools%20example%20import%20code.txt).
+[../examples/StreamerBot](../examples/StreamerBot/Prolink%20Tools%20API%20Integration.txt).
 
 #### Manual setup
 
-1. In Streamer.bot, create a new **Action** (e.g. "Prolink Tools - Now
-   Playing Commands").
-2. Add three **Command** triggers to it: `!trackid`, `!lasttrack`, `!bpm`.
+1. In Streamer.bot, create a new **Action** (e.g. "Prolink Tools - Now Playing").
+2. Add three **Core > Commands** triggers to it: `!trackid`, `!lasttrack`, `!bpm`. ⚠️ Do not use a general **Twitch > Chat > Chat Message** trigger for this action, it will invoke the C# code for every chat message which is simply not needed. ⚠️
 3. Add a single **Execute C# Code** sub-action and paste in the
   [example script](/examples/StreamerBot/prolink%20tools%20action%20script.cs).
-4. Click the **Find References** and then **Compile**.
+1. Click the **Find References** and then **Compile**.
    1. StreamerBot often misses the DLL for the `System` library, so the compile may fail here. If so, you may have to manually add that reference.
       1. Click the **References** tab.
       2. There should already be a bunch of references there like `C:\windows\Microsoft.NET\Framework64\v4.0.30319\mscorlib.dll`, take note of this path.
@@ -191,7 +190,7 @@ An example to get you started already exists in
       4. Follow the same path that the `mscorlib.dll`.
       5. Within that same folder, there should also be a `System.dll`, add that file.
       6. Click on **Compile** again and it should be successful this time.
-5. Click **Save**.
+2. Click **Save**.
 
 ### Notes
 
@@ -200,6 +199,9 @@ An example to get you started already exists in
 - The HTTP call has a 2s timeout and is wrapped in a try/catch so the command
   fails gracefully (rather than hanging or dumping an exception to chat) if
   Prolink Tools isn't running yet.
+- A general **Chat Message** trigger can repeatedly invoke the action, since the
+  bot will see it's own message and then re-trigger the action again in a loop.
+  This has been specifically designed to use the built-in command
 - BPM is truncated (not rounded) to drop the decimal portion.
 
 ## MixItUp integration

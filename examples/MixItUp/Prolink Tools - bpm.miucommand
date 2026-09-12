@@ -1,1 +1,86 @@
-{"$type":"MixItUp.Base.Model.Commands.ChatCommandModel, MixItUp.Base","IncludeExclamation":true,"Wildcards":false,"ID":"47013934-2ad2-4fc6-9db1-04cf8564ccba","Name":"Prolink Tools - BPM","Type":1,"IsEnabled":true,"Unlocked":false,"IsEmbedded":false,"GroupName":null,"Triggers":["bpm"],"Requirements":{"$type":"MixItUp.Base.Model.Requirements.RequirementsSetModel, MixItUp.Base","Requirements":[{"$type":"MixItUp.Base.Model.Requirements.RoleRequirementModel, MixItUp.Base","StreamingPlatform":99999,"UserRole":100,"UserRoleList":[],"SubscriberTier":1,"YouTubeMembershipLevelID":null,"PatreonBenefitID":""},{"$type":"MixItUp.Base.Model.Requirements.ArgumentsRequirementModel, MixItUp.Base","Items":[],"AssignToSpecialIdentifiers":false},{"$type":"MixItUp.Base.Model.Requirements.ThresholdRequirementModel, MixItUp.Base","Amount":0,"TimeSpan":0,"RunForEachUser":false},{"$type":"MixItUp.Base.Model.Requirements.SettingsRequirementModel, MixItUp.Base","DeleteChatMessageWhenRun":false,"DontDeleteChatMessageWhenRun":false,"ShowOnChatContextMenu":false}]},"Actions":[{"$type":"MixItUp.Base.Model.Actions.WebRequestActionModel, MixItUp.Base","Url":"http://127.0.0.1:5152/api/v1/status","ResponseType":1,"JSONToSpecialIdentifiers":{"$type":"System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib","master/status/bpm":"prolinkbpm"},"HttpMethod":0,"CustomHeaders":{"$type":"System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib"},"RequestBody":null,"ID":"dd2c7b0f-db53-4861-975d-879f1df882b4","Name":"Web Request","Type":11,"Enabled":true},{"$type":"MixItUp.Base.Model.Actions.ScriptActionModel, MixItUp.Base","ActionType":0,"Script":"using System;\r\n            \r\nnamespace CustomNamespace\r\n{\r\n    public class CustomClass\r\n    {\r\n        public object Run()\r\n        {\r\n        \t// Built-in  special identifier, if this doesn't get replaced, then it's down to \r\n        \t// MixItUp's terrible implementation. Not to mention the possibility of\r\n        \t// malicous code injection. But anyway... This is the hand they've delt us.\r\n        \tstring username = \"$username\";\r\n\r\n        \t// More to the above comment, the \"special identifiers\" get string replaced,\r\n        \t// there is no parsing done or any useful context injected, this is how we get\r\n        \t// variable values into the script.\r\n            string parsedBpm= \"$prolinkbpm\";\r\n            \r\n            // So now we have to get a little creative to check if our above variable\r\n            // values actually got string replaced or not... Because an unset \"special identifier\"\r\n            // is left as is if it has no value. But we also need to ensure the \"special identifier\"\r\n            // as a string here is, itself, not also get replaced. Therefore we split the string of\r\n            // the \"special identifier\" name up and rebuild it using string interpolation\r\n            string variableIdentifier = \"$\";\r\n            string variablePrefix = \"prolink\";\r\n            string specialIdentifierBpm = $\"{variableIdentifier}{variablePrefix}bpm\";\r\n            \r\n            // Now we can check if $prolinkartist and $prolinktitle actually got replaced as\r\n            // their proper value, or if they got left as their \"special identifier\" name, which\r\n            // would indicate that the Web Request Action failed.\r\n            bool didGetStringReplaced = false;\r\n            if (parsedBpm != specialIdentifierBpm)\r\n            {\r\n            \t\tdidGetStringReplaced = true;\r\n            }\r\n            \r\n            if (didGetStringReplaced)\r\n            {\r\n            \t\treturn $\"@{username} We're currently jamming at: {parsedBpm}BPM! DinoDance\";\r\n            }\r\n            \r\n            return $\"@{username} The current track id is unavailable! BigSad\";\r\n        }\r\n    }\r\n}","ID":"f8ec586d-2621-4e1f-8246-3bae1197b6a8","Name":"Script","Type":38,"Enabled":true},{"$type":"MixItUp.Base.Model.Actions.ChatActionModel, MixItUp.Base","ChatText":"$scriptresult","SendAsStreamer":false,"IsWhisper":false,"WhisperUserName":null,"ID":"a5ba5cd0-ffa9-45ff-b792-7712b8ba3100","Name":"Chat Message","Type":1,"Enabled":true}]}
+{
+    "$type": "MixItUp.Base.Model.Commands.ChatCommandModel, MixItUp.Base",
+    "IncludeExclamation": true,
+    "Wildcards": false,
+    "ID": "47013934-2ad2-4fc6-9db1-04cf8564ccba",
+    "Name": "Prolink Tools - BPM",
+    "Type": 1,
+    "IsEnabled": true,
+    "Unlocked": false,
+    "IsEmbedded": false,
+    "GroupName": null,
+    "Triggers": [
+        "bpm"
+    ],
+    "Requirements": {
+        "$type": "MixItUp.Base.Model.Requirements.RequirementsSetModel, MixItUp.Base",
+        "Requirements": [
+            {
+                "$type": "MixItUp.Base.Model.Requirements.RoleRequirementModel, MixItUp.Base",
+                "StreamingPlatform": 99999,
+                "UserRole": 100,
+                "UserRoleList": [],
+                "SubscriberTier": 1,
+                "YouTubeMembershipLevelID": null,
+                "PatreonBenefitID": ""
+            },
+            {
+                "$type": "MixItUp.Base.Model.Requirements.ArgumentsRequirementModel, MixItUp.Base",
+                "Items": [],
+                "AssignToSpecialIdentifiers": false
+            },
+            {
+                "$type": "MixItUp.Base.Model.Requirements.ThresholdRequirementModel, MixItUp.Base",
+                "Amount": 0,
+                "TimeSpan": 0,
+                "RunForEachUser": false
+            },
+            {
+                "$type": "MixItUp.Base.Model.Requirements.SettingsRequirementModel, MixItUp.Base",
+                "DeleteChatMessageWhenRun": false,
+                "DontDeleteChatMessageWhenRun": false,
+                "ShowOnChatContextMenu": false
+            }
+        ]
+    },
+    "Actions": [
+        {
+            "$type": "MixItUp.Base.Model.Actions.WebRequestActionModel, MixItUp.Base",
+            "Url": "http://127.0.0.1:5152/api/v1/status",
+            "ResponseType": 1,
+            "JSONToSpecialIdentifiers": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib",
+                "master/status/bpm": "prolinkbpm"
+            },
+            "HttpMethod": 0,
+            "CustomHeaders": {
+                "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.String, System.Private.CoreLib]], System.Private.CoreLib"
+            },
+            "RequestBody": null,
+            "ID": "dd2c7b0f-db53-4861-975d-879f1df882b4",
+            "Name": "Web Request",
+            "Type": 11,
+            "Enabled": true
+        },
+        {
+            "$type": "MixItUp.Base.Model.Actions.ScriptActionModel, MixItUp.Base",
+            "ActionType": 0,
+            "Script": "using System;\r\n            \r\nnamespace CustomNamespace\r\n{\r\n    public class CustomClass\r\n    {\r\n        public object Run()\r\n        {\r\n        \t// Built-in  special identifier, if this doesn't get replaced, then it's down to \r\n        \t// MixItUp's terrible implementation. Not to mention the possibility of\r\n        \t// malicous code injection. But anyway... This is the hand they've delt us.\r\n        \tstring username = \"$username\";\r\n\r\n        \t// More to the above comment, the \"special identifiers\" get string replaced,\r\n        \t// there is no parsing done or any useful context injected, this is how we get\r\n        \t// variable values into the script.\r\n            string parsedBpm= \"$prolinkbpm\";\r\n            \r\n            // So now we have to get a little creative to check if our above variable\r\n            // values actually got string replaced or not... Because an unset \"special identifier\"\r\n            // is left as is if it has no value. But we also need to ensure the \"special identifier\"\r\n            // as a string here is, itself, not also get replaced. Therefore we split the string of\r\n            // the \"special identifier\" name up and rebuild it using string interpolation\r\n            string variableIdentifier = \"$\";\r\n            string variablePrefix = \"prolink\";\r\n            string specialIdentifierBpm = $\"{variableIdentifier}{variablePrefix}bpm\";\r\n            \r\n            // Now we can check if $prolinkartist and $prolinktitle actually got replaced as\r\n            // their proper value, or if they got left as their \"special identifier\" name, which\r\n            // would indicate that the Web Request Action failed.\r\n            bool didGetStringReplaced = false;\r\n            if (parsedBpm != specialIdentifierBpm)\r\n            {\r\n            \t\tdidGetStringReplaced = true;\r\n            }\r\n            \r\n            if (didGetStringReplaced)\r\n            {\r\n            \t\tdouble bpmValue = Convert.ToDouble(parsedBpm);\r\n            \t\treturn $\"@{username} We're currently jamming at: {Math.Round(bpmValue)} BPM! DinoDance\";\r\n            }\r\n            \r\n            return $\"@{username} The current track id is unavailable! BigSad\";\r\n        }\r\n    }\r\n}",
+            "ID": "f8ec586d-2621-4e1f-8246-3bae1197b6a8",
+            "Name": "Script",
+            "Type": 38,
+            "Enabled": true
+        },
+        {
+            "$type": "MixItUp.Base.Model.Actions.ChatActionModel, MixItUp.Base",
+            "ChatText": "$scriptresult",
+            "SendAsStreamer": false,
+            "IsWhisper": false,
+            "WhisperUserName": null,
+            "ID": "a5ba5cd0-ffa9-45ff-b792-7712b8ba3100",
+            "Name": "Chat Message",
+            "Type": 1,
+            "Enabled": true
+        }
+    ]
+}
